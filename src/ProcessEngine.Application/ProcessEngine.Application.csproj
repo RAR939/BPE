@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../ProcessEngine.Core/ProcessEngine.Core.csproj" />
+  </ItemGroup>
+</Project>

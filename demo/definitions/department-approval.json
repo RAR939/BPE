@@ -1,0 +1,39 @@
+{
+  "definitionKey": "department-approval",
+  "nodeSettings": {
+    "ValidateRequest": {
+      "actionKey": "validate-request"
+    },
+    "SecretaryReview": {
+      "assigneeId": "secretary"
+    },
+    "SupervisorReview": {
+      "assigneeId": "supervisor"
+    }
+  },
+  "transitionSettings": {
+    "RequestValid": {
+      "condition": {
+        "field": "results.ValidateRequest.valid",
+        "operator": "eq",
+        "value": true
+      }
+    },
+    "BothApproved": {
+      "condition": {
+        "all": [
+          {
+            "field": "results.SecretaryReview.approved",
+            "operator": "eq",
+            "value": true
+          },
+          {
+            "field": "results.SupervisorReview.approved",
+            "operator": "eq",
+            "value": true
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ProcessEngine.Core/ProcessEngine.Core.csproj" />
+    <Project Path="src/ProcessEngine.Application/ProcessEngine.Application.csproj" />
+    <Project Path="src/ProcessEngine.Infrastructure/ProcessEngine.Infrastructure.csproj" />
+    <Project Path="src/ProcessEngine.Api/ProcessEngine.Api.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="DepartmentApprovalDefinitions" targetNamespace="urn:bpe:demo">
+  <bpmn:process id="DepartmentApproval" name="Согласование заявки на кафедре" isExecutable="true">
+    <bpmn:startEvent id="Start" name="Заявка подана">
+      <bpmn:outgoing>Begin</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="ValidateRequest" name="Проверить данные">
+      <bpmn:incoming>Begin</bpmn:incoming>
+      <bpmn:outgoing>Validated</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="ValidGateway" name="Данные верны?" default="RequestInvalid">
+      <bpmn:incoming>Validated</bpmn:incoming>
+      <bpmn:outgoing>RequestValid</bpmn:outgoing>
+      <bpmn:outgoing>RequestInvalid</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="Split">
+      <bpmn:incoming>RequestValid</bpmn:incoming>
+      <bpmn:outgoing>ToSecretary</bpmn:outgoing>
+      <bpmn:outgoing>ToSupervisor</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="SecretaryReview" name="Проверка секретарём">
+      <bpmn:incoming>ToSecretary</bpmn:incoming>
+      <bpmn:outgoing>SecretaryDone</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="SupervisorReview" name="Проверка руководителем">
+      <bpmn:incoming>ToSupervisor</bpmn:incoming>
+      <bpmn:outgoing>SupervisorDone</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:parallelGateway id="Join">
+      <bpmn:incoming>SecretaryDone</bpmn:incoming>
+      <bpmn:incoming>SupervisorDone</bpmn:incoming>
+      <bpmn:outgoing>BothReviewed</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="ApprovedGateway" name="Общие итоги" default="ReviewDeclined">
+      <bpmn:incoming>BothReviewed</bpmn:incoming>
+      <bpmn:outgoing>BothApproved</bpmn:outgoing>
+      <bpmn:outgoing>ReviewDeclined</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Approved" name="Одобрено">
+      <bpmn:incoming>BothApproved</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Rejected" name="Отклонено">
+      <bpmn:incoming>RequestInvalid</bpmn:incoming>
+      <bpmn:incoming>ReviewDeclined</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Begin" sourceRef="Start" targetRef="ValidateRequest" />
+    <bpmn:sequenceFlow id="Validated" sourceRef="ValidateRequest" targetRef="ValidGateway" />
+    <bpmn:sequenceFlow id="RequestValid" sourceRef="ValidGateway" targetRef="Split" />
+    <bpmn:sequenceFlow id="RequestInvalid" sourceRef="ValidGateway" targetRef="Rejected" />
+    <bpmn:sequenceFlow id="ToSecretary" sourceRef="Split" targetRef="SecretaryReview" />
+    <bpmn:sequenceFlow id="ToSupervisor" sourceRef="Split" targetRef="SupervisorReview" />
+    <bpmn:sequenceFlow id="SecretaryDone" sourceRef="SecretaryReview" targetRef="Join" />
+    <bpmn:sequenceFlow id="SupervisorDone" sourceRef="SupervisorReview" targetRef="Join" />
+    <bpmn:sequenceFlow id="BothReviewed" sourceRef="Join" targetRef="ApprovedGateway" />
+    <bpmn:sequenceFlow id="BothApproved" sourceRef="ApprovedGateway" targetRef="Approved" />
+    <bpmn:sequenceFlow id="ReviewDeclined" sourceRef="ApprovedGateway" targetRef="Rejected" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="DepartmentApprovalDiagram">
+    <bpmndi:BPMNPlane id="DepartmentApprovalPlane" bpmnElement="DepartmentApproval">
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="55" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ValidateRequest_di" bpmnElement="ValidateRequest">
+        <dc:Bounds x="130" y="170" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ValidGateway_di" bpmnElement="ValidGateway" isMarkerVisible="true">
+        <dc:Bounds x="305" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Split_di" bpmnElement="Split">
+        <dc:Bounds x="405" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SecretaryReview_di" bpmnElement="SecretaryReview">
+        <dc:Bounds x="505" y="90" width="135" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SupervisorReview_di" bpmnElement="SupervisorReview">
+        <dc:Bounds x="505" y="250" width="135" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Join_di" bpmnElement="Join">
+        <dc:Bounds x="690" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApprovedGateway_di" bpmnElement="ApprovedGateway" isMarkerVisible="true">
+        <dc:Bounds x="790" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Approved_di" bpmnElement="Approved">
+        <dc:Bounds x="895" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Rejected_di" bpmnElement="Rejected">
+        <dc:Bounds x="895" y="380" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Begin_di" bpmnElement="Begin">
+        <di:waypoint x="91" y="210" />
+        <di:waypoint x="130" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Validated_di" bpmnElement="Validated">
+        <di:waypoint x="260" y="210" />
+        <di:waypoint x="305" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="RequestValid_di" bpmnElement="RequestValid">
+        <di:waypoint x="355" y="210" />
+        <di:waypoint x="405" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="RequestInvalid_di" bpmnElement="RequestInvalid">
+        <di:waypoint x="330" y="235" />
+        <di:waypoint x="330" y="398" />
+        <di:waypoint x="895" y="398" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToSecretary_di" bpmnElement="ToSecretary">
+        <di:waypoint x="430" y="185" />
+        <di:waypoint x="430" y="130" />
+        <di:waypoint x="505" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToSupervisor_di" bpmnElement="ToSupervisor">
+        <di:waypoint x="430" y="235" />
+        <di:waypoint x="430" y="290" />
+        <di:waypoint x="505" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SecretaryDone_di" bpmnElement="SecretaryDone">
+        <di:waypoint x="640" y="130" />
+        <di:waypoint x="715" y="130" />
+        <di:waypoint x="715" y="185" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SupervisorDone_di" bpmnElement="SupervisorDone">
+        <di:waypoint x="640" y="290" />
+        <di:waypoint x="715" y="290" />
+        <di:waypoint x="715" y="235" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BothReviewed_di" bpmnElement="BothReviewed">
+        <di:waypoint x="740" y="210" />
+        <di:waypoint x="790" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BothApproved_di" bpmnElement="BothApproved">
+        <di:waypoint x="840" y="210" />
+        <di:waypoint x="895" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ReviewDeclined_di" bpmnElement="ReviewDeclined">
+        <di:waypoint x="815" y="235" />
+        <di:waypoint x="815" y="365" />
+        <di:waypoint x="913" y="365" />
+        <di:waypoint x="913" y="380" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
